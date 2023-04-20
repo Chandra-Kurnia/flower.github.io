@@ -64,6 +64,51 @@ class Flower {
   }
 }
 
+svg.addEventListener("touchstart", e => {
+  // clear the canvas
+  while (svg.lastChild) {
+    svg.removeChild(svg.lastChild);
+  }
+  // if bool == true I can draw
+  bool = true;
+});
+
+svg.addEventListener("touchend", e => {
+  bool = false;
+  previous = {};
+});
+
+svg.addEventListener("touchmove", e => {
+  if (bool) {
+    m = oTouchPosSVG(e);
+    // number of petals
+    let n = 2 + ~~(Math.random() * 4);
+    // set the scale
+    if (previous.x) {
+      let d = dist(m, previous);
+      scale = d / 30;
+    } else {
+      scale = 1;
+    }
+
+    let flower = new Flower(n, { x: m.x, y: m.y }, scale, svg);
+    setTimeout(() => {
+      flower.G.setAttribute("class", `_${flower.n}`);
+    }, 50);
+
+    previous.x = m.x;
+    previous.y = m.y;
+  } //if bool
+});
+
+function oTouchPosSVG(e) {
+  var p = svg.createSVGPoint();
+  p.x = e.touches[0].clientX;
+  p.y = e.touches[0].clientY;
+  var ctm = svg.getScreenCTM().inverse();
+  var p = p.matrixTransform(ctm);
+  return p;
+}
 
 svg.addEventListener("mousedown", e => {
   // clear the canvas
